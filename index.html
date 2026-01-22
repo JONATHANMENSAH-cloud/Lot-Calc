@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lot Size Calculator</title>
-
 <style>
 body{
   margin:0;
@@ -88,6 +87,9 @@ button:hover{
 <div class="app">
   <h2>Lot Size Calculator</h2>
 
+  <label>Custom Pip Value ($ per lot)</label>
+  <input type="number" id="pipValue" placeholder="e.g., 10">
+
   <label>Instrument</label>
   <select id="pair">
     <option value="EURUSD">EUR/USD</option>
@@ -110,28 +112,46 @@ button:hover{
 </div>
 
 <script>
+// Load saved values on page load
+window.addEventListener('load', function() {
+  const ids = ['pipValue','balance','risk','pips','pair'];
+  ids.forEach(id => {
+    const saved = localStorage.getItem(id);
+    if(saved !== null) document.getElementById(id).value = saved;
+  });
+});
+
+// Save values on change
+['pipValue','balance','risk','pips','pair'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function(){
+    localStorage.setItem(id,this.value);
+  });
+});
+
+// Calculate lot size
 document.getElementById("calcBtn").addEventListener("click", function(){
+  const pipValue = parseFloat(document.getElementById("pipValue").value);
   const balance = parseFloat(document.getElementById("balance").value);
   const risk = parseFloat(document.getElementById("risk").value);
   const pips = parseFloat(document.getElementById("pips").value);
   const pair = document.getElementById("pair").value;
   const result = document.getElementById("result");
 
-  if(!balance || !risk || !pips){
+  if(!pipValue || !balance || !risk || !pips){
     result.textContent = "Please fill all fields";
     return;
   }
 
-  let pipValue; // Pip value per lot
-  if(pair === "XAUUSD") {
-    pipValue = 100;  // $100 per pip per 1 standard lot (realistic)
-  } else {
-    pipValue = 10;   // $10 per pip per 1 standard Forex lot
+  // Default pip value based on instrument if user leaves custom pipValue blank
+  let actualPipValue = pipValue;
+  if(actualPipValue <= 0){
+    if(pair === 'XAUUSD') actualPipValue = 100; // Example for gold
+    else actualPipValue = 10; // Forex
   }
 
-  const lot = risk / (pips * pipValue);
+  const lot = risk / (pips * actualPipValue);
 
-  result.textContent = `Lot Size: ${lot.toFixed(2)} lots\nRisk Amount: $${risk.toFixed(2)}\nPips: ${pips}`;
+  result.textContent = `Lot Size: ${lot.toFixed(2)} lots\nRisk Amount: $${risk.toFixed(2)}\nPips: ${pips}\nPip Value: $${actualPipValue}`;
 });
 </script>
 </body>
