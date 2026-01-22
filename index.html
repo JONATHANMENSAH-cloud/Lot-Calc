@@ -5,87 +5,139 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lot Size Calculator</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f172a">
-
 <style>
 body {
-  margin:0;
+  margin: 0;
   font-family: system-ui, Arial;
-  background:#0f172a;
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
+  background: radial-gradient(circle at top, #0b1a2a, #020617);
+  color: #e5e7eb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
+
 .app {
-  width:100%;
-  max-width:360px;
-  background:#020617;
-  padding:20px;
-  border-radius:20px;
-  box-shadow:0 0 20px rgba(0,0,0,.6);
+  width: 100%;
+  max-width: 380px;
+  background: linear-gradient(160deg, #020617, #020617cc);
+  padding: 22px;
+  border-radius: 22px;
+  box-shadow: 0 0 25px rgba(34,197,94,0.25),
+              0 0 60px rgba(56,189,248,0.15);
+  border: 1px solid rgba(255,255,255,0.05);
 }
-h2 {text-align:center;}
-label {display:block;margin-top:10px;font-size:14px;}
-input,select,button {
-  width:100%;
-  padding:10px;
-  margin-top:5px;
-  border-radius:10px;
-  border:none;
-  font-size:16px;
+
+h2 {
+  text-align: center;
+  margin-bottom: 5px;
+  background: linear-gradient(90deg, #22c55e, #38bdf8, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
 }
+
+.badge {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 12px;
+  color: #22c55e;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border-radius: 12px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: white;
+  font-size: 16px;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 10px rgba(34,197,94,0.5);
+}
+
 button {
-  background:#22c55e;
-  color:black;
-  font-weight:bold;
-  margin-top:15px;
+  width: 100%;
+  padding: 14px;
+  margin-top: 18px;
+  border-radius: 14px;
+  border: none;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  background: linear-gradient(90deg, #22c55e, #38bdf8);
+  color: #020617;
+  box-shadow: 0 0 20px rgba(34,197,94,0.6);
+  transition: transform .1s ease, box-shadow .1s ease;
 }
+
+button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 35px rgba(56,189,248,0.8);
+}
+
 .result {
-  text-align:center;
-  font-size:18px;
-  margin-top:15px;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #020617, #020617aa);
+  border: 1px solid #1e293b;
+  text-align: center;
+  font-size: 18px;
+  white-space: pre-line;
 }
 </style>
 </head>
 
 <body>
 <div class="app">
-<h2>Lot Size Calculator</h2>
+  <h2>Lot Size Calculator</h2>
+  <div class="badge">Funded Style Risk Tool</div>
 
-<label>Instrument</label>
-<select id="pair">
-  <option value="EURUSD">EUR/USD</option>
-  <option value="GBPUSD">GBP/USD</option>
-  <option value="XAUUSD">XAU/USD</option>
-</select>
+  <label>Instrument</label>
+  <select id="pair">
+    <option value="EURUSD">EUR/USD</option>
+    <option value="GBPUSD">GBP/USD</option>
+    <option value="XAUUSD">XAU/USD</option>
+  </select>
 
-<label>Account Balance</label>
-<input type="number" id="balance" placeholder="10000">
+  <label>Account Balance</label>
+  <input type="number" id="balance" placeholder="10000">
 
-<label>Risk %</label>
-<input type="number" id="risk" placeholder="1">
+  <label>Risk %</label>
+  <input type="number" id="risk" placeholder="1">
 
-<label>Entry Price</label>
-<input type="number" id="entry">
+  <label>Entry Price</label>
+  <input type="number" id="entry">
 
-<label>Stop Loss</label>
-<input type="number" id="stop">
+  <label>Stop Loss</label>
+  <input type="number" id="stop">
 
-<button onclick="calculate()">CALCULATE</button>
+  <button onclick="calculate()">CALCULATE</button>
 
-<div class="result" id="result"></div>
+  <div class="result" id="result"></div>
 </div>
 
 <script>
 function calculate() {
-  const balance = parseFloat(balanceInput.value);
-  const risk = parseFloat(riskInput.value);
-  const entry = parseFloat(entryInput.value);
-  const stop = parseFloat(stopInput.value);
-  const pair = pairSelect.value;
+  const balance = parseFloat(document.getElementById("balance").value);
+  const risk = parseFloat(document.getElementById("risk").value);
+  const entry = parseFloat(document.getElementById("entry").value);
+  const stop = parseFloat(document.getElementById("stop").value);
+  const pair = document.getElementById("pair").value;
+  const result = document.getElementById("result");
 
   if (!balance || !risk || !entry || !stop) {
     result.textContent = "Fill all fields!";
@@ -104,16 +156,9 @@ function calculate() {
   const riskAmount = balance * (risk / 100);
   const lot = riskAmount / (pips * pipValue);
 
-  result.textContent = `Risk: ${pips.toFixed(1)} pips\nLot: ${lot.toFixed(2)} lots`;
+  result.textContent =
+    `Risk: ${pips.toFixed(1)} pips\nLot Size: ${lot.toFixed(2)} lots`;
 }
-
-const balanceInput = document.getElementById("balance");
-const riskInput = document.getElementById("risk");
-const entryInput = document.getElementById("entry");
-const stopInput = document.getElementById("stop");
-const pairSelect = document.getElementById("pair");
-const result = document.getElementById("result");
 </script>
-
 </body>
 </html>
