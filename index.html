@@ -95,17 +95,14 @@ button:hover{
     <option value="XAUUSD">XAU/USD</option>
   </select>
 
-  <label>Account Balance</label>
+  <label>Account Balance ($)</label>
   <input type="number" id="balance" placeholder="10000">
 
-  <label>Risk %</label>
-  <input type="number" id="risk" placeholder="1">
+  <label>Risk Amount ($)</label>
+  <input type="number" id="risk" placeholder="100">
 
-  <label>Entry Price</label>
-  <input type="number" id="entry">
-
-  <label>Stop Loss</label>
-  <input type="number" id="stop">
+  <label>Pips (Distance to Stop Loss)</label>
+  <input type="number" id="pips" placeholder="50">
 
   <button id="calcBtn">CALCULATE</button>
 
@@ -113,34 +110,26 @@ button:hover{
 </div>
 
 <script>
-document.getElementById("calcBtn").addEventListener("click",function(){
-  const balance=parseFloat(document.getElementById("balance").value);
-  const risk=parseFloat(document.getElementById("risk").value);
-  const entry=parseFloat(document.getElementById("entry").value);
-  const stop=parseFloat(document.getElementById("stop").value);
-  const pair=document.getElementById("pair").value;
-  const result=document.getElementById("result");
+document.getElementById("calcBtn").addEventListener("click", function(){
+  const balance = parseFloat(document.getElementById("balance").value);
+  const risk = parseFloat(document.getElementById("risk").value);
+  const pips = parseFloat(document.getElementById("pips").value);
+  const pair = document.getElementById("pair").value;
+  const result = document.getElementById("result");
 
-  if(!balance||!risk||!entry||!stop){
-    result.textContent="Please fill all fields";
+  if(!balance || !risk || !pips){
+    result.textContent = "Please fill all fields";
     return;
   }
 
-  let pipSize=0.0001;
-  let pipValue=10;
+  let pipValue = 10; // Default for 1 lot
+  if(pair === "XAUUSD") pipValue = 1;
 
-  if(pair==="XAUUSD"){
-    pipSize=0.01;
-    pipValue=1;
-  }
+  const lot = risk / (pips * pipValue);
 
-  const pips=Math.abs(entry-stop)/pipSize;
-  const riskAmount=balance*(risk/100);
-  const lot=riskAmount/(pips*pipValue);
-
-  result.textContent=
-    "Risk: "+pips.toFixed(1)+" pips\nLot Size: "+lot.toFixed(2)+" lots";
+  result.textContent = `Lot Size: ${lot.toFixed(2)} lots\nRisk Amount: $${risk.toFixed(2)}\nPips: ${pips}`;
 });
 </script>
+
 </body>
 </html>
