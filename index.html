@@ -122,15 +122,14 @@ document.getElementById("calcBtn").addEventListener("click", function(){
     return;
   }
 
-  let pipValue = 10;   // Default pip value for Forex 1 lot
-  let lotScale = 1;    // Scale for mini lots
-
-  if(pair === "XAUUSD"){
-    pipValue = 1;      // $1 per pip per 1 lot
-    lotScale = 0.01;   // Scale down so positions are realistic
+  let pipValue; // Pip value per lot
+  if(pair === "XAUUSD") {
+    pipValue = 100;  // $100 per pip per 1 standard lot (realistic)
+  } else {
+    pipValue = 10;   // $10 per pip per 1 standard Forex lot
   }
 
-  const lot = (risk / (pips * pipValue)) * lotScale;
+  const lot = risk / (pips * pipValue);
 
   result.textContent = `Lot Size: ${lot.toFixed(2)} lots\nRisk Amount: $${risk.toFixed(2)}\nPips: ${pips}`;
 });
